@@ -17,8 +17,40 @@ const graph = {
 
 // Return the minimum distance from start --> end
 function minDistance(start, end) {
-  // implement me
-  return 0;
+  // Build up a queue of nodes to visit
+  const visited = {};
+  const distances = { [start]: 0 };
+  const queueItems = [[0, start]];
+
+  while (queueItems.length > 0) {
+    const itemToProcess = queueItems.shift();
+
+    if(!itemToProcess) break;
+
+    const distanceSoFar = itemToProcess[0];
+    const targetGraphKey = itemToProcess[1];
+    visited[targetGraphKey] = true
+
+    // Arrange the items by increasing mileage in the queue
+    const keys = Object.keys(graph[targetGraphKey]).sort((a, b) => {
+      return (graph[targetGraphKey][a] - graph[targetGraphKey][b]);
+    })
+
+    for(const key of keys) {
+      if (visited[key]) continue;
+
+      const updatedDistance = distanceSoFar + graph[targetGraphKey][key];
+      if (distances[key]) {
+        distances[key] = Math.min(updatedDistance, distances[key]);
+      } else {
+        distances[key] = updatedDistance;
+      }
+
+      queueItems.push([updatedDistance, key]);
+    }
+  }
+
+  return distances[end];
 }
 
 
